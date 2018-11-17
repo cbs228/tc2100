@@ -17,6 +17,16 @@ BOTH = (b"\x65\x14\x00\x00\x00\x00\xE4\x00\xE8\x01\x81"
 
 BOTH_K = (b"\x65\x14\x00\x00\x00\x0B\x8E\x0B\x95\x01\x83"
           b"\x08\x08\x00\x02\x22\x0D\x0A")
+BOTH_K_CH1 = 295.8
+BOTH_K_CH2 = 296.5
+
+FRAMING_LEADZERO = b"\x00" + BOTH_K
+
+FRAMING_BAD_HEADER = b"\x00\x65\x14" + BOTH_K
+
+FRAMING_TRAIL_HEADER = BOTH_K + b"\x65\x14\xFF"
+
+FRAMING_TWOMSGS = BOTH_K + BOTH_K
 
 
 def temp_unit_strings():
@@ -56,8 +66,8 @@ def test_decode_ch2():
 
 def test_decode_kelvin():
     msg = Observation.from_bytes(BOTH_K)
-    assert msg.channel_temp[0] == msg.channel_temp[0]
-    assert msg.channel_temp[1] == msg.channel_temp[1]
+    assert msg.channel_temp[0] == BOTH_K_CH1
+    assert msg.channel_temp[1] == BOTH_K_CH2
     assert msg.units == TemperatureUnit.K
 
 
@@ -85,3 +95,44 @@ def test_convert_synthetic():
     assert inp.thermocouple_type == ThermocoupleType.N
     assert inp.units == TemperatureUnit.K
     assert inp.meter_time == timedelta(seconds=0)
+
+
+def test_framing_empty():
+    (msgs, remb) = Observation.parse_stream(b"")
+    assert len(msgs) == 0
+    assert len(remb) == 0
+
+
+def test_framing_leadingzeros():
+    (msgs, remb) = Observation.parse_stream(FRAMING_LEADZERO)
+    assert len(msgs) == 1
+    assert len(remb) == 0
+    assert msgs[0].channel_temp[0] == BOTH_K_CH1
+    assert msgs[0].channel_temp[1] == BOTH_K_CH2
+
+
+def test_framing_bad_header():
+    (msgs, remb) = Observation.parse_stream(FRAMING_BAD_HEADER)
+    assert len(msgs) == 1
+    assert len(remb) == 0
+    assert msgs[0].channel_temp[0] == BOTH_K_CH1
+    assert msgs[0].channel_temp[1] == BOTH_K_CH2
+
+
+def test_framing_trail_header():
+    (msgs, remb) = Observation.parse_stream(FRAMING_TRAIL_HEADER)
+    assert len(msgs) == 1
+    assert len(remb) == 3
+    assert msgs[0].channel_temp[0] == BOTH_K_CH1
+    assert msgs[0].channel_temp[1] == BOTH_K_CH2
+    assert remb == b"\x65\x14\xFF"
+
+
+def test_framing_two_messages():
+    (msgs, remb) = Observation.parse_stream(FRAMING_TWOMSGS)
+    assert len(msgs) == 2
+    assert len(remb) == 0
+    assert msgs[0].channel_temp[0] == BOTH_K_CH1
+    assert msgs[0].channel_temp[1] == BOTH_K_CH2
+    assert msgs[1].channel_temp[0] == BOTH_K_CH1
+    assert msgs[1].channel_temp[1] == BOTH_K_CH2

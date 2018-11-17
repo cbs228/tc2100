@@ -1,12 +1,13 @@
 """ Temperature observation message """
 
+import enum
+import math
+import struct
 from struct import Struct
-from typing import List
+from typing import List, Tuple
 from datetime import datetime
 from datetime import timedelta
 from datetime import timezone
-import enum
-import math
 
 
 @enum.unique
@@ -171,8 +172,10 @@ class Observation:
 
         system_time = datetime.now(timezone.utc)
 
-        assert hdr == cls._header
-        assert trail == cls._trailer
+        if hdr != cls._header:
+            raise struct.error("bad header")
+        if trail != cls._trailer:
+            raise struct.error("bad trailer")
 
         thermocouple_type = ThermocoupleType(thermt & cls._mask_lowbyte_only)
         units = TemperatureUnit(dispu & cls._mask_lowbyte_only)
@@ -188,3 +191,42 @@ class Observation:
         return cls(channel_temp=channel_temp, units=units,
                    thermocouple_type=thermocouple_type,
                    system_time=system_time, meter_time=meter_time)
+
+    @classmethod
+    def parse_stream(cls, octets: bytes) -> Tuple[List['Observation'], bytes]:
+        """ Parse a stream of bytes for Observations
+
+        :param octets: Bytes which contain one or more messages
+        :return: Observations and remaining bytes which do not form complete
+                 messages
+        """
+        sze = cls._format.size
+        messages = []
+        octets = cls._parse_framing(octets)
+        while len(octets) >= sze:
+            try:
+                messages.append(cls.from_bytes(octets[0:sze]))
+                octets = octets[sze:]
+            except (ValueError, struct.error):
+                # if we failed to decode, our framing is off
+                octets = cls._parse_framing(octets[1:])
+        return messages, octets
+
+    @classmethod
+    def _parse_framing(cls, octets: bytes) -> bytes:
+        """ Perform message boundary detection
+
+        Serial protocols lack inherent framing---divisions between message
+        boundaries. Reads might begin in the middle of a message. This
+        method synchronizes to the message boundary by advancing `octets`
+        until the start of message is found.
+
+        :param octets: bytes which may contain a message, not necessarily at
+               start
+        :return: bytes which begin a message, or empty
+        """
+        while len(octets) >= len(cls._header):
+            if octets[0:len(cls._header)] == cls._header:
+                return octets
+            octets = octets[1:]
+        return octets
