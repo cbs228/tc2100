@@ -1,7 +1,8 @@
 from datetime import timedelta
 import math
 
-from tc2100.observation import Observation, ThermocoupleType, TemperatureUnit
+from tc2100.observation import Observation, ThermocoupleType, TemperatureUnit,\
+    MeterTime
 
 NO_DATA = (b"\x65\x14\x00\x00\x00\x09\xB0\x09\xB4\x07\x81"
            b"\x40\x40\x00\x06\x2A\x0D\x0A")
@@ -37,6 +38,21 @@ def test_temp_unit_strings():
 def test_thermocouple_strings():
     assert str(ThermocoupleType.K) == 'K'
     assert int(ThermocoupleType.K) == 1
+
+
+def test_metertime_create():
+    m = MeterTime(255, 3, 2)
+    assert m.hours == 255
+    assert m.minutes == 3
+    assert m.seconds == 2
+    assert str(m) == "255:03:02"
+
+
+def test_metertime_packunpack():
+    m = MeterTime.from_bytes(NO_DATA[13:16])
+    assert m.hours == 0
+    assert m.seconds == 42
+    assert m.minutes == 6
 
 
 def test_decode_no_data():

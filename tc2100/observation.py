@@ -5,6 +5,7 @@ import math
 import struct
 from struct import Struct
 from typing import List, Tuple
+from collections import namedtuple
 from datetime import datetime
 from datetime import timedelta
 from datetime import timezone
@@ -54,6 +55,44 @@ class ThermocoupleType(enum.IntEnum):
 
     def __str__(self):
         return self.name
+
+
+class MeterTime (namedtuple('MeterTime',
+                            ('hours', 'minutes', 'seconds'))):
+    """ Elapsed time indication from the thermometer
+
+    The TC2100 represents time as ``hours : minutes : seconds`` from
+    boot-up. The maximum representable time is ``255:59:59``. `MeterTime`
+    objects are immutable.
+    """
+    _format = Struct("!3B")
+    __slots__ = ()
+
+    @classmethod
+    def format(cls) -> str:
+        """ Struct formatting code
+
+        :return: Struct format string for this object
+        """
+        return cls._format.format[1:]
+
+    @classmethod
+    def size(cls) -> int:
+        """ Packed size
+
+        :return: Packed size of this object, in bytes
+        """
+        return cls._format.size
+
+    def __str__(self):
+        return "%03d:%02d:%02d" % self
+
+    def to_bytes(self) -> bytes:
+        return self._format.pack(self)
+
+    @classmethod
+    def from_bytes(cls, octets: bytes) -> 'MeterTime':
+        return MeterTime(*cls._format.unpack(octets))
 
 
 class Observation:
