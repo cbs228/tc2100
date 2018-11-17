@@ -29,12 +29,12 @@ FRAMING_TRAIL_HEADER = BOTH_K + b"\x65\x14\xFF"
 FRAMING_TWOMSGS = BOTH_K + BOTH_K
 
 
-def temp_unit_strings():
+def test_temp_unit_strings():
     assert str(TemperatureUnit.K) == 'K'
     assert int(TemperatureUnit.K) == 3
 
 
-def thermocouple_strings():
+def test_thermocouple_strings():
     assert str(ThermocoupleType.K) == 'K'
     assert int(ThermocoupleType.K) == 1
 
