@@ -33,6 +33,21 @@ class ThermocoupleType(enum.IntEnum):
     K = 1
     """ K Type """
 
+    J = 2
+    """ J Type """
+
+    T = 3
+    """ T Type """
+
+    E = 4
+    """ E Type """
+
+    R = 5
+    """ R Type """
+
+    S = 6
+    """ S Type """
+
     N = 7
     """ N Type """
 
@@ -59,7 +74,7 @@ class Observation:
     _flag_valid = 0x08
     _flag_invalid = 0x40
     _invalid_placeholder = -32768
-    _mask_units = 0x0F
+    _mask_lowbyte_only = 0x0F
     _units_highbyte = 0x80
     _hour = timedelta(hours=1)
     _minute = timedelta(minutes=1)
@@ -159,8 +174,8 @@ class Observation:
         assert hdr == cls._header
         assert trail == cls._trailer
 
-        thermocouple_type = ThermocoupleType(thermt)
-        units = TemperatureUnit(dispu & cls._mask_units)
+        thermocouple_type = ThermocoupleType(thermt & cls._mask_lowbyte_only)
+        units = TemperatureUnit(dispu & cls._mask_lowbyte_only)
 
         channel_temp = [math.nan, math.nan]
         if ch1v & cls._flag_valid:
