@@ -3,10 +3,9 @@
 import enum
 import math
 from struct import Struct
-from collections import namedtuple
 from datetime import datetime
 from datetime import timezone
-from typing import Tuple
+from typing import Tuple, NamedTuple
 
 
 @enum.unique
@@ -55,16 +54,30 @@ class ThermocoupleType(enum.IntEnum):
         return self.name
 
 
-class MeterTime(namedtuple('MeterTime',
-                           ('hours', 'minutes', 'seconds'))):
+class MeterTime(NamedTuple):
     """ Elapsed time indication from the thermometer
 
     The TC2100 represents time as ``hours : minutes : seconds`` from
     boot-up. The maximum representable time is ``255:59:59``. `MeterTime`
     objects are immutable.
+
+    .. py:attribute:: hours
+
+        Elapsed time since meter bootup, in hours
+
+    .. py:attribute:: minutes
+
+        Elapsed time since meter bootup, in minutes
+
+    .. py:attribute:: seconds
+
+        Elapsed time since meter bootup, in seconds
     """
+    hours: int
+    minutes: int
+    seconds: int
+
     _format = Struct("!3B")
-    __slots__ = ()
 
     def __str__(self):
         return "%03d:%02d:%02d" % self
@@ -96,17 +109,51 @@ class MeterTime(namedtuple('MeterTime',
         return cls._format.size
 
 
-class Observation(namedtuple('Observation',
-                             ('system_time',
-                              'meter_time',
-                              'thermocouple_type',
-                              'unit',
-                              'temperature_ch1',
-                              'temperature_ch2'))):
+class Observation(NamedTuple):
     """ Temperature observation message from the thermometer
+
+    Observations are time-tagged in Python, using the current value of the
+    system's real-time clock, when they are converted :py:meth:`from_bytes()`.
+    Otherwise, an Observation contains only data output by the thermometer.
+
+    .. py:attribute:: system_time
+
+        Time, according to the system clock, when this Observation was
+        de-serialized. Always a timezone-aware `datetime` in the UTC time zone.
+
+    .. py:attribute:: meter_time
+
+        Time, according to the meter, that the temperature measurement was
+        taken.
+
+    .. py:attribute:: thermocouple_type
+
+        Thermocouple type used to make this measurement.
+
+    .. py:attribute:: unit
+
+        The TC2100 outputs temperature in the units that it was configured to
+        display. This field represents the temperature units for the
+        :py:prop:`temperatures`.
+
+    .. py:attribute:: temperature_ch1
+
+        Temperature value on channel 1, or `math.nan` if the measurement is
+        not valid.
+
+    .. py:attribute:: temperature_ch2
+
+        Temperature value on channel 2, or `math.nan` if the measurement is
+        invalid.
     """
 
-    __slots__ = ()
+    system_time: datetime or None
+    meter_time: MeterTime or None
+    thermocouple_type: ThermocoupleType or str
+    unit: TemperatureUnit or str
+    temperature_ch1: float
+    temperature_ch2: float
+
     _num_channels = 2
     _flag_valid = 0x08
     _flag_invalid = 0x40
