@@ -177,6 +177,13 @@ class Observation(NamedTuple):
         """
         return self.temperature_ch1, self.temperature_ch2
 
+    def as_dict(self) -> dict:
+        """ Convert to dict
+
+        :return: This Observation, expressed as a mutable dict.
+        """
+        return self._asdict()
+
     def to_bytes(self) -> bytes:
         """ Convert to wireline representation
 

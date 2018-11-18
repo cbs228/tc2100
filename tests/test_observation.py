@@ -38,6 +38,8 @@ def test_decode_no_data():
     assert msg.temperatures[1] != msg.temperatures[1]
     assert msg.unit == TemperatureUnit.C
     assert str(msg.meter_time) == "000:06:42"
+    msgdict = msg.as_dict()
+    assert str(msgdict['meter_time']) == "000:06:42"
 
 
 def test_decode_ch1():
