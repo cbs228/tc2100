@@ -65,6 +65,14 @@ def test_decode_kelvin():
     assert msg.unit == TemperatureUnit.K
 
 
+def test_decode_negative_temperature():
+    msg = Observation.from_bytes(datastrings.NEGATIVE_14P1[5:5+11])
+    assert msg.temperature_ch1 == -14.1
+
+    msg2 = Observation.from_bytes(msg.to_bytes())
+    assert msg2.temperature_ch1 == -14.1
+
+
 def test_decode_reencode():
     msg = Observation.from_bytes(datastrings.BOTH[5:5+11])
 

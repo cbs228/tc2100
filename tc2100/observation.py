@@ -157,6 +157,7 @@ class Observation(NamedTuple):
     _num_channels = 2
     _flag_valid = 0x08
     _flag_invalid = 0x40
+    _flag_negative = 0x80
     _invalid_placeholder = -32768
     _mask_lowbyte_only = 0x0F
     _units_highbyte = 0x80
@@ -255,17 +256,24 @@ class Observation(NamedTuple):
     @classmethod
     def _decode_temperature(cls, value, valid_flag) -> float:
         if valid_flag & cls._flag_valid:
-            return float(value) / 10.0
+            val = float(value) / 10.0
+            if valid_flag & cls._flag_negative:
+                val = -val
+            return val
         return math.nan
 
     @classmethod
     def _encode_temperature_value(cls, temperature) -> int:
         if not math.isfinite(temperature):
             return cls._invalid_placeholder
-        return int(temperature * 10)
+        return int(math.fabs(temperature) * 10)
 
     @classmethod
     def _encode_temperature_flag(cls, temperature) -> int:
         if not math.isfinite(temperature):
             return cls._flag_invalid
-        return cls._flag_valid
+
+        flag = cls._flag_valid
+        if temperature < 0:
+            flag |= cls._flag_negative
+        return flag
