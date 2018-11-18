@@ -4,6 +4,8 @@ To use the Protocol, subclass :py:class:`ThermometerProtocol` and implement
 its ``observation_received()`` method to handle messages.
 """
 from abc import abstractmethod
+from typing import TextIO
+from csv import DictWriter
 import struct
 
 from twisted.internet.protocol import Protocol
@@ -77,3 +79,21 @@ class ThermometerProtocol(Protocol):
             self._buf = self._buf[1:]
 
         return False
+
+
+class ThermometerToCSVProtocol(ThermometerProtocol):
+    """ Output thermometer measurements as CSV
+
+    .. py:attribute:: file_handle
+
+        An open text stream where output will be written. Files must be
+        opened with the ``newline=''`` option.
+    """
+    def __init__(self, file_handle: TextIO):
+        super().__init__()
+        self._writer = DictWriter(file_handle,
+                                  fieldnames=Observation.field_names())
+        self._writer.writeheader()
+
+    def observation_received(self, observation: Observation) -> None:
+        self._writer.writerow(observation.as_dict())

@@ -1,4 +1,6 @@
-from tc2100.protocol import ThermometerProtocol
+import io
+
+from tc2100.protocol import ThermometerProtocol, ThermometerToCSVProtocol
 from tc2100.observation import Observation
 
 from . import datastrings
@@ -68,3 +70,12 @@ def test_framing_bad_msg():
     buf.dataReceived(datastrings.BAD_UNIT)
 
     assert len(buf.messages) == 0
+
+
+def test_csvwriter():
+    buf = io.StringIO()
+    conv = ThermometerToCSVProtocol(file_handle=buf)
+    conv.dataReceived(datastrings.FRAMING_LEADZERO)
+    conv.dataReceived(datastrings.FRAMING_LEADZERO)
+    lines = buf.getvalue().splitlines()
+    assert len(lines) == 3

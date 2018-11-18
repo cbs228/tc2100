@@ -244,6 +244,15 @@ class Observation(NamedTuple):
         return cls._format.size + MeterTime.size()
 
     @classmethod
+    def field_names(cls) -> Tuple:
+        """ Get all field names
+
+        :return Field names of an Observation, in an order suitable for
+                writing to a CSV file
+        """
+        return cls._fields
+
+    @classmethod
     def _decode_temperature(cls, value, valid_flag) -> float:
         if valid_flag & cls._flag_valid:
             return float(value) / 10.0
