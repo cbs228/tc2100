@@ -6,6 +6,7 @@ from struct import Struct
 from collections import namedtuple
 from datetime import datetime
 from datetime import timezone
+from typing import Tuple
 
 
 @enum.unique
@@ -100,7 +101,8 @@ class Observation(namedtuple('Observation',
                               'meter_time',
                               'thermocouple_type',
                               'unit',
-                              'temperatures'))):
+                              'temperature_ch1',
+                              'temperature_ch2'))):
     """ Temperature observation message from the thermometer
     """
 
@@ -119,6 +121,14 @@ class Observation(namedtuple('Observation',
         "B"     # display unit (enumerated)
         "2B"    # channel validity / status flags
     )
+
+    @property
+    def temperatures(self) -> Tuple[float, float]:
+        """ Obtain all temperature measurements
+
+        :return: Temperature measurements from each channel
+        """
+        return self.temperature_ch1, self.temperature_ch2
 
     def to_bytes(self) -> bytes:
         """ Convert to wireline representation
@@ -167,7 +177,8 @@ class Observation(namedtuple('Observation',
                            meter_time,
                            therm_type,
                            display_unit,
-                           tuple(temperatures))
+                           temperatures[0],
+                           temperatures[1])
 
     @classmethod
     def size(cls) -> int:

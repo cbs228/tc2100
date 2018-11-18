@@ -78,7 +78,8 @@ def test_decode_reencode():
 
 
 def test_convert_synthetic():
-    msg = Observation(temperatures=(math.nan, math.nan),
+    msg = Observation(temperature_ch1=math.nan,
+                      temperature_ch2=math.nan,
                       unit='K', thermocouple_type='N',
                       meter_time=None, system_time=None)
     out = msg.to_bytes()
