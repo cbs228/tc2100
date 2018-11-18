@@ -10,6 +10,7 @@ from twisted.internet import reactor
 from twisted.internet.serialport import SerialPort
 
 from tc2100.protocol import ThermometerToCSVProtocol
+from tc2100.discover import discover
 from tc2100.version import __version__ as version
 
 
@@ -21,10 +22,23 @@ def main():
     parser = get_arg_parser()
     args = parser.parse_args()
     if args.version:
-        print(version_string())
+        print(version_string(), file=sys.stderr)
         sys.exit(0)
 
-    run_dump_to_csv(args.port, args.out)
+    port_name = args.port
+    if not port_name:
+        # Autodiscover
+        ports = discover()
+        if not ports:
+            print("Cannot find a TC2100 compatible digital thermometer.\n\n"
+                  "If you have one attached and powered on, check that its\n"
+                  "USB product ID and vendor ID are listed in the discover\n"
+                  "module. You can manually specify a serial port address\n"
+                  "with the --port option.", file=sys.stderr)
+            sys.exit(1)
+        port_name = ports[0].device
+
+    run_dump_to_csv(port_name, args.out)
 
 
 def get_arg_parser() -> argparse.ArgumentParser:
