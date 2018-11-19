@@ -10,16 +10,24 @@ from typing import Tuple, NamedTuple
 
 @enum.unique
 class TemperatureUnit(enum.IntEnum):
-    """ A unit of temperature """
+    """ A unit of temperature
+
+    .. py:attribute:: C
+
+       Degrees Celsius
+
+    .. py:attribute:: F
+
+       Degrees Fahrenheit
+
+    .. py:attribute:: K
+
+       Kelvin
+    """
 
     C = 1
-    """ Degrees Celsius """
-
     F = 2
-    """ Fahrenheit """
-
     K = 3
-    """ Kelvin """
 
     def __str__(self):
         return self.name
@@ -27,28 +35,44 @@ class TemperatureUnit(enum.IntEnum):
 
 @enum.unique
 class ThermocoupleType(enum.IntEnum):
-    """ A type of thermocouple """
+    """ A type of thermocouple
+
+    .. py:attribute:: K
+
+       K Type
+
+    .. py:attribute:: J
+
+       J Type
+
+    .. py:attribute:: T
+
+       T Type
+
+    .. py:attribute:: E
+
+       E Type
+
+    .. py:attribute:: R
+
+       R Type
+
+    .. py:attribute:: S
+
+       S Type
+
+    .. py:attribute:: N
+
+       N Type
+    """
 
     K = 1
-    """ K Type """
-
     J = 2
-    """ J Type """
-
     T = 3
-    """ T Type """
-
     E = 4
-    """ E Type """
-
     R = 5
-    """ R Type """
-
     S = 6
-    """ S Type """
-
     N = 7
-    """ N Type """
 
     def __str__(self):
         return self.name
@@ -134,7 +158,7 @@ class Observation(NamedTuple):
 
         The TC2100 outputs temperature in the units that it was configured to
         display. This field represents the temperature units for the
-        :py:prop:`temperatures`.
+        :py:meth:`temperatures`.
 
     .. py:attribute:: temperature_ch1
 
