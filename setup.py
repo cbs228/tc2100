@@ -32,15 +32,23 @@ setup(
     platforms=['any'],
     python_requires='>=3.6',
     classifiers=[
-        'Development Status :: 3 - Alpha',
+        'Development Status :: 4 - Beta',
         'Intended Audience :: Developers',
+        'Intended Audience :: Science/Research',
         'License :: OSI Approved :: MIT License',
         'Operating System :: OS Independent',
+        'Environment :: Console',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Topic :: Software Development :: Libraries :: Python Modules',
+        'Topic :: System :: Hardware :: Hardware Drivers',
+        'Framework :: Twisted',
     ],
-    keywords='nbt schema minecraft mcschematic schematic package library',
+    keywords='thermometer tc2100 thermocouple 10c4:ea60 serial driver',
+
+    entry_points={
+        'console_scripts': ['tc2100dump=tc2100.__main__:main'],
+    },
 
     packages=find_packages(),
 
