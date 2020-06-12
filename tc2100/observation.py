@@ -30,7 +30,7 @@ class TemperatureUnit(enum.IntEnum):
     K = 3
 
     def __str__(self):
-        return self.name
+        return str(self.name)
 
 
 @enum.unique
@@ -75,7 +75,7 @@ class ThermocoupleType(enum.IntEnum):
     N = 7
 
     def __str__(self):
-        return self.name
+        return str(self.name)
 
 
 class MeterTime(NamedTuple):

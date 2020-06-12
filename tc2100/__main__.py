@@ -4,6 +4,7 @@ Dump TC2100 temperature readings to CSV
 
 import argparse
 import sys
+import os
 from typing import TextIO
 
 from twisted.internet import reactor
@@ -67,10 +68,11 @@ def run_dump_to_csv(port: str, file_name: str = None):
     """
 
     if not file_name or file_name == '-':
+        _make_stdout_linebuffered()
         _run_dump(port, sys.stdout)
         return
 
-    with open(file_name, mode='w', newline='') as outfile:
+    with open(file_name, mode='w', newline='', buffering=1) as outfile:
         _run_dump(port, outfile)
 
 
@@ -80,6 +82,15 @@ def version_string() -> str:
     :return Version string
     """
     return "%s version %s" % (_application_name, version)
+
+
+def _make_stdout_linebuffered() -> None:
+    try:
+        sys.stdout.reconfigure(line_buffering=True)
+    except TypeError:
+        sys.stdout = os.fdopen(0, 'w', 1)
+    except AttributeError:
+        sys.stdout = os.fdopen(0, 'w', 1)
 
 
 def _run_dump(port: str, file_handle: TextIO) -> None:
