@@ -37,7 +37,6 @@ class ThermometerProtocol(Protocol):
 
         :param observation: Temperature update
         """
-        pass
 
     def dataReceived(self, data: bytes) -> None:
         self._buf += data
