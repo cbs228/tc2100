@@ -1,2 +1,2 @@
-twisted~=18.9.0
+twisted~=20.3.0
 pyserial~=3.4
