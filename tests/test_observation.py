@@ -86,6 +86,9 @@ def test_decode_reencode():
     cmp = datastrings.BOTH[5:5+11]
     assert outb == cmp
 
+    outdict = msg.as_dict()
+    assert outdict['temperature_ch1'] == 22.8
+
 
 def test_convert_synthetic():
     msg = Observation(temperature_ch1=math.nan,
