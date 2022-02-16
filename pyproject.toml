@@ -24,7 +24,7 @@ tc2100dump = "tc2100.__main__:main"
 
 [tool.poetry.dependencies]
 python = "^3.8"
-twisted = "~=20.3.0"
+twisted = "~=22.1"
 pyserial = "~=3.4"
 sphinx = { version = "~=1.6.7", optional = true }
 sphinx_rtd_theme = { version = "~=1.0.0", optional = true }
