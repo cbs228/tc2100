@@ -37,7 +37,7 @@ from tc2100 import version as versinfo
 # ones.
 extensions = ['sphinx.ext.autodoc',
               'sphinx.ext.intersphinx',
-              'm2r']
+              'm2r2']
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']

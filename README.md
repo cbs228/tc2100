@@ -17,7 +17,7 @@ The manufacturer provides software for the USB interface. *This is not it.*
 This is unsupported, third-party software which was developed by reverse
 engineering.
 
-The `tc2100` module is a python 3.6 software development kit for receiving
+The `tc2100` module is a python 3.9 software development kit for receiving
 real-time temperature measurements. It includes a console script, `tc2100dump`,
 for logging measurements to [csv](https://docs.python.org/3.6/library/csv.html)
 files.

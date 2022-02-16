@@ -1,0 +1,42 @@
+[tool.poetry]
+name = "tc2100"
+version = "0.1.2"
+description = "Receive data from a compatible USB digital thermometer"
+authors = ["Colin S. <3526918+cbs228@users.noreply.github.com>"]
+license = "MIT"
+readme = "README.md"
+classifiers = [
+  'Development Status :: 4 - Beta',
+  'Intended Audience :: Developers',
+  'Intended Audience :: Science/Research',
+  'License :: OSI Approved :: MIT License',
+  'Operating System :: OS Independent',
+  'Environment :: Console',
+  'Programming Language :: Python :: 3.8',
+  'Programming Language :: Python :: 3.9',
+  'Topic :: Software Development :: Libraries :: Python Modules',
+  'Topic :: System :: Hardware :: Hardware Drivers',
+  'Framework :: Twisted'
+]
+
+[tool.poetry.scripts]
+tc2100dump = "tc2100.__main__:main"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+twisted = "~=20.3.0"
+pyserial = "~=3.4"
+sphinx = { version = "~=1.6.7", optional = true }
+sphinx_rtd_theme = { version = "~=1.0.0", optional = true }
+m2r2 = { version = "~=0.3.2", optional = true }
+
+[tool.poetry.dev-dependencies]
+pytest = "^7.0.1"
+flake8 = "^4.0.1"
+
+[tool.poetry.extras]
+docs = ["sphinx", "sphinx_rtd_theme", "m2r2"]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
