@@ -57,7 +57,7 @@ package will automatically install these dependencies.
 ## Quick Start
 
 Using the supplied USB cable, connect a TC2100 thermometer to your computer.
-Hold down the "PC Link" button until the meter beeps and the "USB" indicator
+Hold down the "`PC-Link`" button until the meter beeps and the "`USB`" indicator
 illuminates. Then run:
 
 ```bash
@@ -90,6 +90,10 @@ If auto-detection fails, you may specify the port manually:
 ```bash
 tc2100dump --port /dev/ttyUSB0 --out temperatures.csv
 ```
+
+If the script detects your thermometer, but no data is printed, check to make
+sure you have pressed the "`PC-Link`" button and that the "`USB`" indicator
+is illuminated.
 
 ## Development Status
 
