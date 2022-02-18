@@ -104,7 +104,7 @@ class MeterTime(NamedTuple):
     _format = Struct("!3B")
 
     def __str__(self):
-        return "%03d:%02d:%02d" % self
+        return f"{self.hours:03d}:{self.minutes:02d}:{self.seconds:02d}"
 
     def to_bytes(self) -> bytes:
         """ Convert to wireline representation
@@ -207,7 +207,7 @@ class Observation(NamedTuple):
 
         :return: This Observation, expressed as a mutable dict.
         """
-        return self._asdict()
+        return self._asdict()  # pylint: disable=no-member
 
     def to_bytes(self) -> bytes:
         """ Convert to wireline representation
@@ -217,7 +217,7 @@ class Observation(NamedTuple):
 
         :return: Packed byte representation of this Observation
         """
-        out_fields = list()
+        out_fields = []
         out_fields.extend([self._encode_temperature_value(v)
                            for v in self.temperatures])
         if isinstance(self.thermocouple_type, str):

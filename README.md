@@ -17,7 +17,7 @@ The manufacturer provides software for the USB interface. *This is not it.*
 This is unsupported, third-party software which was developed by reverse
 engineering.
 
-The `tc2100` module is a python 3.6 software development kit for receiving
+The `tc2100` module is a python 3.9 software development kit for receiving
 real-time temperature measurements. It includes a console script, `tc2100dump`,
 for logging measurements to [csv](https://docs.python.org/3.6/library/csv.html)
 files.
@@ -57,7 +57,7 @@ package will automatically install these dependencies.
 ## Quick Start
 
 Using the supplied USB cable, connect a TC2100 thermometer to your computer.
-Hold down the "PC Link" button until the meter beeps and the "USB" indicator
+Hold down the "`PC-Link`" button until the meter beeps and the "`USB`" indicator
 illuminates. Then run:
 
 ```bash
@@ -90,6 +90,10 @@ If auto-detection fails, you may specify the port manually:
 ```bash
 tc2100dump --port /dev/ttyUSB0 --out temperatures.csv
 ```
+
+If the script detects your thermometer, but no data is printed, check to make
+sure you have pressed the "`PC-Link`" button and that the "`USB`" indicator
+is illuminated.
 
 ## Development Status
 

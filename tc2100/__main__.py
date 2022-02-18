@@ -15,7 +15,7 @@ from tc2100.discover import discover
 from tc2100.version import __version__ as version
 
 
-_application_name = 'tc2100dump'
+_APPLICATION_NAME = 'tc2100dump'
 
 
 def main():
@@ -72,7 +72,12 @@ def run_dump_to_csv(port: str, file_name: str = None):
         _run_dump(port, sys.stdout)
         return
 
-    with open(file_name, mode='w', newline='', buffering=1) as outfile:
+    with open(
+            file_name,
+            mode='w',
+            newline='',
+            buffering=1,
+            encoding='utf-8') as outfile:
         _run_dump(port, outfile)
 
 
@@ -81,7 +86,7 @@ def version_string() -> str:
 
     :return Version string
     """
-    return "%s version %s" % (_application_name, version)
+    return f"{_APPLICATION_NAME} version {version}"
 
 
 def _make_stdout_linebuffered() -> None:
@@ -96,7 +101,7 @@ def _make_stdout_linebuffered() -> None:
 def _run_dump(port: str, file_handle: TextIO) -> None:
     SerialPort(ThermometerToCSVProtocol(file_handle=file_handle),
                port, reactor, baudrate=9600)
-    reactor.run()
+    reactor.run()  # pylint: disable=no-member
 
 
 if __name__ == '__main__':
