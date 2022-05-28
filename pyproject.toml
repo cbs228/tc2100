@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "tc2100"
-version = "0.1.4"
+version = "0.1.5"
 description = "Receive data from a compatible USB digital thermometer"
 authors = ["Colin S. <3526918+cbs228@users.noreply.github.com>"]
 license = "MIT"
